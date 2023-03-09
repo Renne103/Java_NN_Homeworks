@@ -1,81 +1,94 @@
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+import java.io.*;
 
-public class CharacterCount {
-    // Initialize the letter count arrays
-    private final static int[] upperCaseCount = new int[26];
-    private final static int[] lowerCaseCount = new int[26];
-
+public class CharacterCount extends JFrame {
+    private JTextField fileNameField;
+    private JTextArea resultArea;
     /**
      * counts the number of each letter in the file, including uppercase and lowercase letters
      */
-    public static void count() {
-        // Ask the user for the name of the input file
-        BufferedReader reader = new BufferedReader(new java.io.InputStreamReader(System.in));
-        System.out.println("Enter the name of the input file:");
-        String fileName = null;
-        try {
-            fileName = reader.readLine();
-        } catch (IOException e) {
-            System.out.println("Error reading input: " + e.getMessage());
-            System.exit(1);
-        }
+    public CharacterCount() {
+        //GUI
+        super("File Analyzer");
 
-        // Check if the input file exists
-        java.io.File inputFile = new java.io.File(fileName);
-        if (!inputFile.exists()) {
-            System.out.println("Error: input file does not exist");
-            System.exit(1);
-        }
-
-
-        // Read the input file and count the letters
-        try (BufferedReader fileReader = new BufferedReader(new FileReader(inputFile))) {
-            String line;
-            while ((line = fileReader.readLine()) != null) {
-                for (int i = 0; i < line.length(); i++) {
-                    char c = line.charAt(i);
-                    if (Character.isUpperCase(c)) {
-                        upperCaseCount[c - 'A']++;
-                    } else if (Character.isLowerCase(c)) {
-                        lowerCaseCount[c - 'a']++;
-                    }
-                }
+        JLabel fileNameLabel = new JLabel("Enter absolute file path:");
+        fileNameField = new JTextField(20);
+        JButton analyzeButton = new JButton("Analyze");
+        analyzeButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                analyzeFile();
             }
-        } catch (IOException e) {
-            System.out.println("Error reading input file: " + e.getMessage());
-            System.exit(1);
-        }
+        });
+
+        JPanel inputPanel = new JPanel();
+        inputPanel.add(fileNameLabel);
+        inputPanel.add(fileNameField);
+        inputPanel.add(analyzeButton);
+
+        resultArea = new JTextArea(20, 40);
+        JScrollPane scrollPane = new JScrollPane(resultArea);
+
+        getContentPane().setLayout(new BorderLayout());
+        getContentPane().add(inputPanel, BorderLayout.NORTH);
+        getContentPane().add(scrollPane, BorderLayout.CENTER);
+
+        pack();
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setVisible(true);
     }
 
-    public static void write() {
-        BufferedReader reader = new BufferedReader(new java.io.InputStreamReader(System.in));
 
-        // Ask the user for the name of the output file
-        System.out.println("Enter the name of the output file:");
-        String outputFileName = null;
-        try {
-            outputFileName = reader.readLine();
-        } catch (IOException e) {
-            System.out.println("Error reading input: " + e.getMessage());
-            System.exit(1);
+    private void analyzeFile() {
+        String fileName = fileNameField.getText();
+        File inputFile = new File(fileName);
+        // Check if the input file exists
+        if (!inputFile.exists()) {
+            JOptionPane.showMessageDialog(this, "File does not exist.", "Error",
+                    JOptionPane.ERROR_MESSAGE);
+            return;
         }
+        // Read the input file and count the letters
+        try (FileReader reader = new FileReader(inputFile)) {
+            // Initialize the letter count array
+            int[] letterCounts = new int[26 * 2];
 
-        // Write the letter count results to the output file
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(outputFileName))) {
-            for (int i = 0; i < 26; i++) {
-                writer.write((char) ('A' + i) + ": " + upperCaseCount[i] + "\n");
-                writer.write((char) ('a' + i) + ": " + lowerCaseCount[i] + "\n");
+            int c;
+            while ((c = reader.read()) != -1) {
+                if (c >= 'A' && c <= 'Z') {
+                    letterCounts[c - 'A']++;
+                } else if (c >= 'a' && c <= 'z') {
+                    letterCounts[c - 'a' + 26]++;
+                }
             }
-        } catch (IOException e) {
-            System.out.println("Error writing output file: " + e.getMessage());
-            System.exit(1);
-        }
 
-        // Print a success message
-        System.out.println("Letter count successfully written to " + outputFileName);
+            // Ask the user for the name of the output file
+            String outputFileName = JOptionPane.showInputDialog(this, "Enter output file name:");
+            if (outputFileName == null) {
+                return;
+            }
+
+            File outputFile = new File(outputFileName);
+            boolean fileExists = outputFile.exists();
+
+            // Write the letter count results to the output file
+            try (FileWriter writer = new FileWriter(outputFile, true)) {
+                if (!fileExists) {
+                    writer.write("Letter Counts:\n");
+                }
+                for (int i = 0; i < 26; i++) {
+                    writer.write((char) ('A' + i) + ": " + letterCounts[i] + "\n");
+                }
+                for (int i = 26; i < 26 * 2; i++) {
+                    writer.write((char) ('a' + i - 26) + ": " + letterCounts[i] + "\n");
+                }
+                writer.write("\n");
+            }
+            JOptionPane.showMessageDialog(this, "File analysis complete.", "Success",
+                    JOptionPane.INFORMATION_MESSAGE);
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }
 }
