@@ -7,8 +7,9 @@ public class CharacterCount extends JFrame {
     private JTextField fileNameField;
     private JTextArea resultArea;
     /**
-     * counts the number of each letter in the file, including uppercase and lowercase letters
+     * structuring a GUI and get file path
      */
+
     public CharacterCount() {
         //GUI
         super("File Analyzer");
@@ -39,7 +40,10 @@ public class CharacterCount extends JFrame {
         setVisible(true);
     }
 
-
+    /**
+     * counts the number of each letter in the file, including uppercase and lowercase letters and write them into
+     * existing file or write them into new file
+     */
     private void analyzeFile() {
         String fileName = fileNameField.getText();
         File inputFile = new File(fileName);
