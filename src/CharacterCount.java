@@ -5,6 +5,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 public class CharacterCount {
+    // Initialize the letter count arrays
+    private final static int[] upperCaseCount = new int[26];
+    private final static int[] lowerCaseCount = new int[26];
 
     /**
      * counts the number of each letter in the file, including uppercase and lowercase letters
@@ -28,9 +31,6 @@ public class CharacterCount {
             System.exit(1);
         }
 
-        // Initialize the letter count arrays
-        int[] upperCaseCount = new int[26];
-        int[] lowerCaseCount = new int[26];
 
         // Read the input file and count the letters
         try (BufferedReader fileReader = new BufferedReader(new FileReader(inputFile))) {
@@ -49,6 +49,10 @@ public class CharacterCount {
             System.out.println("Error reading input file: " + e.getMessage());
             System.exit(1);
         }
+    }
+
+    public static void write() {
+        BufferedReader reader = new BufferedReader(new java.io.InputStreamReader(System.in));
 
         // Ask the user for the name of the output file
         System.out.println("Enter the name of the output file:");
@@ -75,4 +79,5 @@ public class CharacterCount {
         System.out.println("Letter count successfully written to " + outputFileName);
     }
 }
+
 
