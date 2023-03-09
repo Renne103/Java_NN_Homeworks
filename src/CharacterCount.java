@@ -3,7 +3,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 /**
- * asks the user for the absolute name of the file, checks if the file exists, opens it for reading, counts the number
+ * a class that asks the user for the absolute name of the file, checks if the file exists, opens it for reading, counts the number
  * of capital and small letters of the English alphabet in it and writes the results of the count to a user-defined file,
  * creating it (or opening it for writing if such a file already exists)
  */
