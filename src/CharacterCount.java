@@ -79,5 +79,3 @@ public class CharacterCount {
         System.out.println("Letter count successfully written to " + outputFileName);
     }
 }
-
-
