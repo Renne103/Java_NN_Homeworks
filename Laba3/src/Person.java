@@ -33,21 +33,18 @@ public class Person {
         this.middleName = middleName;
 
         try {
-            // Преобразуем строку даты в объект LocalDate
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
             this.birthDate = LocalDate.parse(birthDateString, formatter);
         } catch (DateTimeParseException e) {
             throw new IllegalArgumentException("Некорректный формат даты рождения. Используйте формат dd.MM.yyyy.");
         }
 
-        // Проверяем, что дата рождения не больше текущей даты
-        LocalDate currentDate = LocalDate.now();
-        if (birthDate.isAfter(currentDate)) {
+        LocalDate curDate = LocalDate.now();
+        if (birthDate.isAfter(curDate)) {
             throw new IllegalArgumentException("Дата рождения не может быть в будущем.");
         }
 
 
-    // Преобразуем строку даты в объект LocalDate
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
         this.birthDate = LocalDate.parse(birthDateString, formatter);
     }
@@ -99,19 +96,19 @@ public class Person {
      @return the person's age in years as a string with the appropriate grammatical ending
      */
     public String getAgeInYears() {
-        LocalDate currentDate = LocalDate.now();
-        Period period = Period.between(birthDate, currentDate);
-        int years = period.getYears();
-        int lastDigit = years % 10;
+        LocalDate curDate = LocalDate.now();
+        Period period = Period.between(birthDate, curDate);
+        int y = period.getYears();
+        int lastDigit = y % 10;
         String ending;
-        if (lastDigit == 1 && years != 11) {
+        if (lastDigit == 1 && y != 11) {
             ending = "год";
-        } else if (lastDigit >= 2 && lastDigit <= 4 && !(years >= 12 && years <= 14)) {
+        } else if (lastDigit >= 2 && lastDigit <= 4 && !(y >= 12 && y <= 14)) {
             ending = "года";
         } else {
             ending = "лет";
         }
-        return years + " " + ending;
+        return y + " " + ending;
     }
 
 }
